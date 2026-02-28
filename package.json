@@ -74,6 +74,7 @@
     "clean:build:allowtgz": "node ./scripts/delete-recursively.js 'media/' '**/dist/' '**/.cache/' '**/.next/' '**/.turbo/' '**/tsconfig.tsbuildinfo' '**/meta_*.json'",
     "clean:cache": "node ./scripts/delete-recursively.js node_modules/.cache! packages/payload/node_modules/.cache! .next/*",
     "dev": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=16384\" tsx ./test/dev.ts",
+    "dev:vite": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=16384\" tsx ./test/dev-vite.ts",
     "dev:generate-db-schema": "pnpm runts ./test/generateDatabaseSchema.ts",
     "dev:generate-graphql-schema": "pnpm runts ./test/generateGraphQLSchema.ts",
     "dev:generate-importmap": "pnpm runts ./test/generateImportMap.ts",

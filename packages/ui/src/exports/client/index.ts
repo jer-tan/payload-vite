@@ -361,6 +361,19 @@ export { defaultTheme, type Theme, ThemeProvider, useTheme } from '../../provide
 export { TranslationProvider, useTranslation } from '../../providers/Translation/index.js'
 export { useWindowInfo, WindowInfoProvider } from '../../providers/WindowInfo/index.js'
 export { useControllableState } from '../../hooks/useControllableState.js'
+export {
+  RouterAdapterProvider,
+  useLink,
+  useRouter,
+  usePathname,
+  useSearchParams as useRouterSearchParams,
+  useParams as useRouterParams,
+} from '../../providers/RouterAdapter/index.js'
+export type {
+  PayloadLinkProps,
+  PayloadRouter,
+  RouterAdapter,
+} from '../../providers/RouterAdapter/index.js'
 
 export { Text as TextCondition } from '../../elements/WhereBuilder/Condition/Text/index.js'
 export { Select as SelectCondition } from '../../elements/WhereBuilder/Condition/Select/index.js'

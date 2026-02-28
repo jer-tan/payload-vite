@@ -10,7 +10,7 @@ import {
   useModal,
   useTranslation,
 } from '@payloadcms/ui'
-import { useRouter } from 'next/navigation.js'
+import { useRouter } from '@payloadcms/ui/providers/RouterAdapter'
 import { formatAdminURL } from 'payload/shared'
 import React, { useCallback, useMemo, useState } from 'react'
 
