@@ -1,6 +1,6 @@
 'use client'
 
-import { usePathname, useRouter } from 'next/navigation.js'
+import { usePathname, useRouter } from '../RouterAdapter/index.js'
 import React, { createContext, use, useCallback, useEffect, useRef } from 'react'
 
 import { useEffectEvent } from '../../hooks/useEffectEvent.js'

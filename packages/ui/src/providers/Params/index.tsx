@@ -1,6 +1,6 @@
 'use client'
 
-import { useParams as useNextParams } from 'next/navigation.js'
+import { useParams as useNextParams } from '../RouterAdapter/index.js'
 import React, { createContext, use } from 'react'
 
 export type Params = ReturnType<typeof useNextParams>

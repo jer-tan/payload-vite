@@ -1,7 +1,7 @@
 'use client'
 
 import { useModal } from '@faceless-ui/modal'
-import { usePathname } from 'next/navigation.js'
+import { usePathname } from '../../providers/RouterAdapter/index.js'
 import { useEffect, useRef } from 'react'
 
 import { useEffectEvent } from '../../hooks/useEffectEvent.js'

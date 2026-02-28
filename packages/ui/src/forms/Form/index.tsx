@@ -1,6 +1,6 @@
 'use client'
 import { dequal } from 'dequal/lite' // lite: no need for Map and Set support
-import { useRouter } from 'next/navigation.js'
+import { useRouter } from '../../providers/RouterAdapter/index.js'
 import { serialize } from 'object-to-formdata'
 import { type FormState, type PayloadRequest } from 'payload'
 import {

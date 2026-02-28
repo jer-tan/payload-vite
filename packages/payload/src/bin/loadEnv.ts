@@ -1,28 +1,49 @@
-import nextEnvImport from '@next/env'
+import { config as dotenvConfig } from 'dotenv'
+import { existsSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 import { findUpSync } from '../utilities/findUp.js'
-const { loadEnvConfig } = nextEnvImport
 
 /**
- * Try to find user's env files and load it. Uses the same algorithm next.js uses to parse env files, meaning this also supports .env.local, .env.development, .env.production, etc.
+ * Load environment variables from .env files.
+ * Supports .env, .env.local, .env.development, .env.production, etc.
+ * Replaces the previous @next/env dependency with dotenv.
  */
 export function loadEnv(path?: string) {
-  if (path?.length) {
-    loadEnvConfig(path, true)
-    return
+  const dir = path?.length ? path : process.cwd()
+  const dev = process.env.NODE_ENV !== 'production'
+  const envMode = dev ? 'development' : 'production'
+
+  // Load env files in priority order (later files don't override earlier ones)
+  // This matches Next.js env file loading precedence
+  const envFiles = [
+    `.env.${envMode}.local`,
+    '.env.local',
+    `.env.${envMode}`,
+    '.env',
+  ]
+
+  let loaded = false
+
+  for (const envFile of envFiles) {
+    const envPath = resolve(dir, envFile)
+    if (existsSync(envPath)) {
+      dotenvConfig({ path: envPath, override: false })
+      loaded = true
+    }
   }
 
-  const dev = process.env.NODE_ENV !== 'production'
-  const { loadedEnvFiles } = loadEnvConfig(process.cwd(), dev)
-
-  if (!loadedEnvFiles?.length) {
-    // use findUp to find the env file. So, run loadEnvConfig for every directory upwards
+  if (!loaded && !path?.length) {
+    // use findUp to find the env file
     findUpSync({
       // @ts-expect-error - vestiges of when tsconfig was not strict. Feel free to improve
-      condition: (dir) => {
-        const { loadedEnvFiles } = loadEnvConfig(dir, true)
-        if (loadedEnvFiles?.length) {
-          return true
+      condition: (searchDir) => {
+        for (const envFile of envFiles) {
+          const envPath = resolve(searchDir, envFile)
+          if (existsSync(envPath)) {
+            dotenvConfig({ path: envPath, override: false })
+            return true
+          }
         }
       },
       dir: process.cwd(),

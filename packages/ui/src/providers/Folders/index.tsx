@@ -3,7 +3,7 @@
 import type { ClientCollectionConfig, CollectionSlug, FolderSortKeys } from 'payload'
 import type { FolderBreadcrumb, FolderDocumentItemKey, FolderOrDocument } from 'payload/shared'
 
-import { useRouter, useSearchParams } from 'next/navigation.js'
+import { useRouter, useSearchParams } from '../RouterAdapter/index.js'
 import { extractID, formatAdminURL, formatFolderOrDocumentItem } from 'payload/shared'
 import * as qs from 'qs-esm'
 import React from 'react'

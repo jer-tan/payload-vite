@@ -13,7 +13,7 @@ import type { LanguageOptions } from 'payload'
 
 import { importDateFNSLocale, t } from '@payloadcms/translations'
 import { enUS } from 'date-fns/locale/en-US'
-import { useRouter } from 'next/navigation.js'
+import { useRouter } from '../RouterAdapter/index.js'
 import React, { createContext, use, useEffect, useState } from 'react'
 
 type ContextType<

@@ -1,6 +1,6 @@
 'use client'
 import { getTranslation } from '@payloadcms/translations'
-import { useRouter } from 'next/navigation.js'
+import { useRouter } from '../../providers/RouterAdapter/index.js'
 import * as qs from 'qs-esm'
 import React, { Fragment } from 'react'
 

@@ -2,7 +2,7 @@
 
 import type { ClientUser, DocumentViewClientProps } from 'payload'
 
-import { useRouter, useSearchParams } from 'next/navigation.js'
+import { useRouter, useSearchParams } from '../../providers/RouterAdapter/index.js'
 import { formatAdminURL, hasAutosaveEnabled } from 'payload/shared'
 import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'

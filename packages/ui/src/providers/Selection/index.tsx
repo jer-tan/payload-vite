@@ -1,7 +1,7 @@
 'use client'
 import type { Where } from 'payload'
 
-import { useSearchParams } from 'next/navigation.js'
+import { useSearchParams } from '../RouterAdapter/index.js'
 import * as qs from 'qs-esm'
 import React, { createContext, use, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 

@@ -1,9 +1,14 @@
 import type { AcceptedLanguages } from '@payloadcms/translations'
-import type { ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies.js'
 
 import { extractHeaderLanguage } from '@payloadcms/translations'
 
 import type { SanitizedConfig } from '../config/types.js'
+
+type ReadonlyRequestCookies = {
+  get: (name: string) => { name: string; value: string } | undefined
+  getAll: () => Array<{ name: string; value: string }>
+  has: (name: string) => boolean
+}
 
 type GetRequestLanguageArgs = {
   config: SanitizedConfig

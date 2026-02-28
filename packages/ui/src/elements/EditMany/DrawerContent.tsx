@@ -4,7 +4,7 @@ import type { SelectType, Where } from 'payload'
 
 import { useModal } from '@faceless-ui/modal'
 import { getTranslation } from '@payloadcms/translations'
-import { useRouter, useSearchParams } from 'next/navigation.js'
+import { useRouter, useSearchParams } from '../../providers/RouterAdapter/index.js'
 import {
   combineWhereConstraints,
   formatAdminURL,

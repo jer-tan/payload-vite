@@ -1,8 +1,5 @@
 import type { CollectionSlug, ServerProps, ViewTypes } from 'payload'
 
-import { headers as getHeaders } from 'next/headers.js'
-import { redirect } from 'next/navigation.js'
-
 import type { MultiTenantPluginConfig } from '../../types.js'
 
 import { getGlobalViewRedirect } from '../../utilities/getGlobalViewRedirect.js'
@@ -23,7 +20,7 @@ type Args = {
 export const GlobalViewRedirect = async (args: Args) => {
   const collectionSlug = args?.collectionSlug
   if (collectionSlug && args.globalSlugs?.includes(collectionSlug)) {
-    const headers = await getHeaders()
+    const headers = (args as any).headers ?? new Headers()
     const redirectRoute = await getGlobalViewRedirect({
       slug: collectionSlug,
       docID: args.docID,
@@ -40,7 +37,11 @@ export const GlobalViewRedirect = async (args: Args) => {
     })
 
     if (redirectRoute) {
-      redirect(redirectRoute)
+      // In non-Next.js environments, throw a redirect response
+      throw new Response(null, {
+        headers: { Location: redirectRoute },
+        status: 307,
+      })
     }
   }
 }

@@ -1,6 +1,5 @@
 import type { Payload, TypedUser, ViewTypes } from 'payload'
 
-import { unauthorized } from 'next/navigation.js'
 import { formatAdminURL, hasAutosaveEnabled } from 'payload/shared'
 
 import type { MultiTenantPluginConfig } from '../types.js'
@@ -51,7 +50,7 @@ export async function getGlobalViewRedirect({
   let redirectRoute: `/${string}` | void = undefined
 
   if (!user) {
-    return unauthorized()
+    throw new Response('Unauthorized', { status: 401 })
   }
 
   if (!tenant) {

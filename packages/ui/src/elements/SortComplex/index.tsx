@@ -3,7 +3,7 @@ import type { OptionObject, SanitizedCollectionConfig } from 'payload'
 
 import { getTranslation } from '@payloadcms/translations'
 // TODO: abstract the `next/navigation` dependency out from this component
-import { usePathname, useRouter, useSearchParams } from 'next/navigation.js'
+import { usePathname, useRouter, useSearchParams } from '../../providers/RouterAdapter/index.js'
 import { sortableFieldTypes } from 'payload'
 import { fieldAffectsData } from 'payload/shared'
 import * as qs from 'qs-esm'

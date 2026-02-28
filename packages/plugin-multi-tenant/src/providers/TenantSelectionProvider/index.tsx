@@ -1,7 +1,5 @@
 import type { Payload, TypedUser } from 'payload'
 
-import { cookies as getCookies } from 'next/headers.js'
-
 import type { MultiTenantPluginConfig } from '../../types.js'
 
 import { getTenantOptions } from '../../utilities/getTenantOptions.js'
@@ -9,6 +7,7 @@ import { TenantSelectionProviderClient } from './index.client.js'
 
 type Args<ConfigType> = {
   children: React.ReactNode
+  cookies?: { get: (name: string) => { value: string } | undefined }
   payload: Payload
   tenantsArrayFieldName: string
   tenantsArrayTenantFieldName: string
@@ -22,6 +21,7 @@ type Args<ConfigType> = {
 
 export const TenantSelectionProvider = async ({
   children,
+  cookies,
   payload,
   tenantsArrayFieldName,
   tenantsArrayTenantFieldName,
@@ -40,8 +40,7 @@ export const TenantSelectionProvider = async ({
     userHasAccessToAllTenants,
   })
 
-  const cookies = await getCookies()
-  const tenantCookie = cookies.get('payload-tenant')?.value
+  const tenantCookie = cookies?.get('payload-tenant')?.value
   let initialValue = undefined
 
   /**

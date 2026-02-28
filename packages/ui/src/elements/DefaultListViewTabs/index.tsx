@@ -3,7 +3,7 @@
 import type { ClientCollectionConfig, ClientConfig, ViewTypes } from 'payload'
 
 import { getTranslation } from '@payloadcms/translations'
-import { useRouter } from 'next/navigation.js'
+import { useRouter } from '../../providers/RouterAdapter/index.js'
 import { formatAdminURL } from 'payload/shared'
 import React from 'react'
 
