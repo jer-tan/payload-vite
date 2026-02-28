@@ -29,24 +29,35 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "pnpm build:types && pnpm build:swc",
+    "build:debug": "pnpm build",
+    "build:swc": "swc ./src -d ./dist --config-file .swcrc --strip-leading-paths",
+    "build:types": "tsc --emitDeclarationOnly --outDir dist",
+    "clean": "rimraf -g {dist,*.tsbuildinfo}",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "express": "^4.21.0",
-    "react-router-dom": "^7.6.1",
-    "graphql-playground-html": "^1.6.30"
+    "graphql-playground-html": "^1.6.30",
+    "react-router-dom": "^7.6.1"
   },
   "devDependencies": {
+    "@payloadcms/eslint-config": "workspace:*",
+    "@swc/cli": "0.7.9",
+    "@swc/core": "1.15.3",
     "@types/express": "^5.0.0",
+    "copyfiles": "2.4.1",
+    "rimraf": "6.0.1",
     "typescript": "5.7.3",
     "vite": "^6.3.5"
   },
   "peerDependencies": {
-    "payload": "workspace:*",
-    "@payloadcms/ui": "workspace:*",
     "@payloadcms/graphql": "workspace:*",
     "@payloadcms/translations": "workspace:*",
+    "@payloadcms/ui": "workspace:*",
+    "payload": "workspace:*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "vite": "^6.0.0"
@@ -57,6 +68,30 @@
     },
     "vite": {
       "optional": true
+    }
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "import": "./dist/index.js",
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./admin/entry": {
+        "import": "./dist/admin/entry.js",
+        "types": "./dist/admin/entry.d.ts",
+        "default": "./dist/admin/entry.js"
+      },
+      "./admin/router-adapter": {
+        "import": "./dist/admin/router-adapter.js",
+        "types": "./dist/admin/router-adapter.d.ts",
+        "default": "./dist/admin/router-adapter.js"
+      },
+      "./vite-config": {
+        "import": "./dist/vite/config.js",
+        "types": "./dist/vite/config.d.ts",
+        "default": "./dist/vite/config.js"
+      }
     }
   }
 }

@@ -145,6 +145,38 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=8096
 
+  tests-vite:
+    name: Vite Runtime Tests
+    runs-on: ubuntu-24.04
+    needs: [changes, build]
+    if: needs.changes.outputs.needs_tests == 'true'
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Node setup
+        uses: ./.github/actions/setup
+        with:
+          pnpm-run-install: false
+          pnpm-restore-cache: false # Full build is restored below
+          cache-propagation-delay: 120 # https://github.com/actions/cache/issues/1710
+
+      - name: Restore build
+        uses: actions/cache@v4
+        with:
+          path: ./*
+          key: ${{ github.sha }}
+          fail-on-cache-miss: true
+
+      - name: TypeScript check — @payloadcms/vite package
+        run: pnpm --filter @payloadcms/vite typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+
+      - name: Vite admin panel build
+        run: pnpm build:app:vite
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
+
   # Generate the integration test matrix from TypeScript config
   int-matrix:
     name: Setup Int Matrix
@@ -700,6 +732,7 @@ jobs:
         tests-e2e,
         tests-types,
         tests-type-generation,
+        tests-vite,
       ]
 
     steps:
