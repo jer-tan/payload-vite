@@ -1,5 +1,5 @@
 'use client'
-import { useRouter } from 'next/navigation.js'
+import { useRouter } from '../../providers/RouterAdapter/index.js'
 import { formatAdminURL } from 'payload/shared'
 import React, { useCallback } from 'react'
 

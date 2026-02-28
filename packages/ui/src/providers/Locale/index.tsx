@@ -2,7 +2,7 @@
 
 import type { Locale } from 'payload'
 
-import { useSearchParams } from 'next/navigation.js'
+import { useSearchParams } from '../RouterAdapter/index.js'
 import { formatAdminURL } from 'payload/shared'
 import React, { createContext, use, useEffect, useRef, useState } from 'react'
 

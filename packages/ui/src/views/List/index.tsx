@@ -3,7 +3,7 @@
 import type { ListViewClientProps } from 'payload'
 
 import { getTranslation } from '@payloadcms/translations'
-import { useRouter } from 'next/navigation.js'
+import { useRouter } from '../../providers/RouterAdapter/index.js'
 import { formatAdminURL, formatFilesize } from 'payload/shared'
 import React, { Fragment, useEffect } from 'react'
 

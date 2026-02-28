@@ -1,5 +1,5 @@
 'use client'
-import type { LinkProps } from 'next/link.js'
+import type { PayloadLinkProps } from '../../../providers/RouterAdapter/index.js'
 
 import * as React from 'react'
 
@@ -33,7 +33,7 @@ type MenuButtonProps = {
   children: React.ReactNode
   className?: string
   disabled?: boolean
-  href?: LinkProps['href']
+  href?: PayloadLinkProps['href']
   id?: string
   onClick?: (e?: React.MouseEvent) => void
 }

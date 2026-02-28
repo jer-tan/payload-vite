@@ -1,12 +1,10 @@
 'use client'
-import NextLinkImport from 'next/link.js'
-import { useRouter } from 'next/navigation.js'
+import { useLink, useRouter } from '../../providers/RouterAdapter/index.js'
 import React from 'react'
 
-import { useRouteTransition } from '../../providers/RouteTransition/index.js'
-import { formatUrl } from './formatUrl.js'
+import type { PayloadLinkProps } from '../../providers/RouterAdapter/index.js'
 
-const NextLink = 'default' in NextLinkImport ? NextLinkImport.default : NextLinkImport
+import { useRouteTransition } from '../../providers/RouteTransition/index.js'
 
 // Copied from  https://github.com/vercel/next.js/blob/canary/packages/next/src/client/link.tsx#L180-L191
 function isModifiedEvent(event: React.MouseEvent): boolean {
@@ -29,7 +27,7 @@ type Props = {
    * @default true
    */
   preventDefault?: boolean
-} & Parameters<typeof NextLink>[0]
+} & PayloadLinkProps
 
 export const Link: React.FC<Props> = ({
   children,
@@ -42,10 +40,11 @@ export const Link: React.FC<Props> = ({
   ...rest
 }) => {
   const router = useRouter()
+  const AdapterLink = useLink()
   const { startRouteTransition } = useRouteTransition()
 
   return (
-    <NextLink
+    <AdapterLink
       href={href}
       onClick={(e) => {
         if (isModifiedEvent(e)) {
@@ -62,7 +61,7 @@ export const Link: React.FC<Props> = ({
           e.preventDefault()
         }
 
-        const url = typeof href === 'string' ? href : formatUrl(href)
+        const url = href
 
         const navigate = () => {
           if (replace) {
@@ -79,6 +78,6 @@ export const Link: React.FC<Props> = ({
       {...rest}
     >
       {children}
-    </NextLink>
+    </AdapterLink>
   )
 }

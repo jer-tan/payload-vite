@@ -1,5 +1,5 @@
 'use client'
-import { usePathname } from 'next/navigation.js'
+import { usePathname } from '../../providers/RouterAdapter/index.js'
 import { formatAdminURL } from 'payload/shared'
 import React from 'react'
 

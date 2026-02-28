@@ -2,7 +2,7 @@
 import type { CollectionSlug } from 'payload'
 
 import { useModal } from '@faceless-ui/modal'
-import { useRouter } from 'next/navigation.js'
+import { useRouter } from '../../../providers/RouterAdapter/index.js'
 import React from 'react'
 
 import { useBulkUpload } from '../../../elements/BulkUpload/index.js'

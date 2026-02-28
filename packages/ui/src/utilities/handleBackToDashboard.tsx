@@ -1,10 +1,10 @@
-import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime.js'
+import type { PayloadRouter } from '../providers/RouterAdapter/index.js'
 
 import { formatAdminURL } from 'payload/shared'
 
 type BackToDashboardProps = {
   adminRoute: string
-  router: AppRouterInstance
+  router: PayloadRouter
   serverURL?: string
 }
 
