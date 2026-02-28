@@ -19,7 +19,7 @@ const port = parseInt(process.env.PORT || '3000', 10)
 
 async function start() {
   // Import the Payload config
-  // Users should update this path to their own config
+  // Set PAYLOAD_CONFIG_PATH env var to point to your config file if not using the default
   const configPath = process.env.PAYLOAD_CONFIG_PATH || './payload.config.ts'
   const configModule = await import(configPath)
   const config = configModule.default
@@ -31,9 +31,13 @@ async function start() {
   })
 
   app.listen(port, () => {
+    // eslint-disable-next-line no-console
     console.log(`\n  Payload CMS server running at http://localhost:${port}`)
+    // eslint-disable-next-line no-console
     console.log(`  Admin panel: http://localhost:${port}/admin`)
+    // eslint-disable-next-line no-console
     console.log(`  REST API:    http://localhost:${port}/api`)
+    // eslint-disable-next-line no-console
     console.log(`  GraphQL:     http://localhost:${port}/api/graphql\n`)
   })
 
@@ -50,6 +54,7 @@ async function start() {
 }
 
 start().catch((err) => {
+  // eslint-disable-next-line no-console
   console.error('Failed to start server:', err)
   process.exit(1)
 })

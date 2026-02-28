@@ -3,14 +3,17 @@ import type { SanitizedConfig } from 'payload'
 import type { ViteDevServer } from 'vite'
 
 import express from 'express'
+import { Readable } from 'node:stream'
 import { handleEndpoints } from 'payload'
 
+import { adminHtmlHandler } from './routes/admin.js'
 import { graphqlHandler, graphqlPlaygroundHandler } from './routes/graphql.js'
-import { adminHandler, adminHtmlHandler } from './routes/admin.js'
 
 export type PayloadViteServerOptions = {
   /** Path to admin panel entry file for Vite */
   adminEntryPath?: string
+  /** Maximum body size for JSON and URL-encoded requests (default: '5mb') */
+  bodyLimit?: string
   /** Payload config (can be a promise) */
   config: Promise<SanitizedConfig> | SanitizedConfig
   /** Enable Vite dev middleware (HMR). Set false in production. */
@@ -60,8 +63,8 @@ function expressToFetchRequest(req: ExpressRequest): Request {
       } else if (contentType.includes('multipart/form-data')) {
         // For multipart, we need the raw body - pass through the readable stream
         // Express body-parser should NOT parse multipart; let Payload handle it
-        init.body = req as unknown as ReadableStream
-        // @ts-expect-error duplex required for streaming body
+        init.body = Readable.toWeb(req) as ReadableStream
+        // @ts-expect-error duplex required for streaming body in Node.js
         init.duplex = 'half'
       } else if (contentType.includes('application/x-www-form-urlencoded')) {
         init.body = new URLSearchParams(req.body as Record<string, string>).toString()
@@ -72,9 +75,8 @@ function expressToFetchRequest(req: ExpressRequest): Request {
       }
     } else if (req.readable) {
       // Raw body stream for unparsed requests
-      const { Readable } = await import('node:stream')
       init.body = Readable.toWeb(req) as ReadableStream
-      // @ts-expect-error duplex required for streaming body
+      // @ts-expect-error duplex required for streaming body in Node.js
       init.duplex = 'half'
     }
   }
@@ -122,9 +124,9 @@ export async function createPayloadViteServer(
 ): Promise<{ app: Express; vite?: ViteDevServer }> {
   const {
     adminEntryPath,
+    bodyLimit = '5mb',
     config: configPromise,
     dev = process.env.NODE_ENV !== 'production',
-    port = 3000,
     viteBuildDir = './dist/admin',
   } = options
 
@@ -137,23 +139,24 @@ export async function createPayloadViteServer(
 
   // --- Body parsing for non-multipart ---
   // Don't parse multipart; Payload handles file uploads internally
-  app.use(express.json({ limit: '5mb' }))
-  app.use(express.urlencoded({ extended: true, limit: '5mb' }))
+  app.use(express.json({ limit: bodyLimit }))
+  app.use(express.urlencoded({ extended: true, limit: bodyLimit }))
 
   // --- Static files ---
   app.use('/media', express.static('./media'))
 
   // --- REST API routes ---
   // Matches all routes under /api/*
-  app.all(`${apiRoute}/*splat`, async (req: ExpressRequest, res: ExpressResponse) => {
+  app.all(`${apiRoute}/*`, async (req: ExpressRequest, res: ExpressResponse) => {
     try {
-      const fetchRequest = await expressToFetchRequest(req)
+      const fetchRequest = expressToFetchRequest(req)
       const fetchResponse = await handleEndpoints({
         config: configPromise,
         request: fetchRequest,
       })
       await sendFetchResponse(fetchResponse, res)
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('REST API error:', err)
       if (!res.headersSent) {
         res.status(500).json({ error: 'Internal Server Error' })
@@ -167,10 +170,11 @@ export async function createPayloadViteServer(
 
     app.post(gqlFullPath, async (req: ExpressRequest, res: ExpressResponse) => {
       try {
-        const fetchRequest = await expressToFetchRequest(req)
+        const fetchRequest = expressToFetchRequest(req)
         const fetchResponse = await graphqlHandler(configPromise, fetchRequest)
         await sendFetchResponse(fetchResponse, res)
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('GraphQL error:', err)
         if (!res.headersSent) {
           res.status(500).json({ error: 'Internal Server Error' })
@@ -180,10 +184,11 @@ export async function createPayloadViteServer(
 
     app.get(`${gqlFullPath}/playground`, async (req: ExpressRequest, res: ExpressResponse) => {
       try {
-        const fetchRequest = await expressToFetchRequest(req)
+        const fetchRequest = expressToFetchRequest(req)
         const fetchResponse = await graphqlPlaygroundHandler(configPromise, fetchRequest)
         await sendFetchResponse(fetchResponse, res)
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('GraphQL Playground error:', err)
         if (!res.headersSent) {
           res.status(500).send('Error loading playground')
@@ -193,7 +198,7 @@ export async function createPayloadViteServer(
   }
 
   // --- Admin Panel ---
-  let vite: ViteDevServer | undefined
+  let vite: undefined | ViteDevServer
 
   if (dev) {
     // Development: Use Vite dev server as middleware for HMR
@@ -211,7 +216,7 @@ export async function createPayloadViteServer(
   }
 
   // Admin HTML fallback - serves the SPA for all admin routes
-  app.get(`${adminRoute}*splat`, async (req: ExpressRequest, res: ExpressResponse) => {
+  app.get(`${adminRoute}*`, async (req: ExpressRequest, res: ExpressResponse) => {
     try {
       const html = await adminHtmlHandler({
         adminEntryPath: adminEntryPath || './src/admin/entry.tsx',
@@ -223,6 +228,7 @@ export async function createPayloadViteServer(
       res.setHeader('Content-Type', 'text/html')
       res.send(html)
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Admin panel error:', err)
       if (vite) {
         vite.ssrFixStacktrace(err as Error)

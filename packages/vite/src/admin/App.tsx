@@ -1,20 +1,10 @@
+import { ProgressBar, RouteTransitionProvider } from '@payloadcms/ui'
 /**
  * Main Admin application component.
  * Wraps the Payload UI providers and renders the admin panel views.
  */
 import React, { useEffect, useState } from 'react'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-
-import {
-  ConfigProvider,
-  RootProvider,
-  AuthProvider,
-  TranslationProvider,
-  ThemeProvider,
-  RouteTransitionProvider,
-  ProgressBar,
-  useAuth,
-} from '@payloadcms/ui'
 
 const apiRoute = window.__PAYLOAD_API_ROUTE__ || '/api'
 const serverURL = window.__PAYLOAD_SERVER_URL__ || ''
@@ -39,30 +29,32 @@ async function fetchClientConfig() {
 function LoginView() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<null | string>(null)
   const navigate = useNavigate()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
-    try {
-      const res = await fetch(`${serverURL}${apiRoute}/users/login`, {
-        body: JSON.stringify({ email, password }),
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        method: 'POST',
-      })
+    void (async () => {
+      try {
+        const res = await fetch(`${serverURL}${apiRoute}/users/login`, {
+          body: JSON.stringify({ email, password }),
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        })
 
-      if (res.ok) {
-        navigate(adminRoute)
-      } else {
-        const data = await res.json()
-        setError(data.errors?.[0]?.message || 'Login failed')
+        if (res.ok) {
+          void navigate(adminRoute)
+        } else {
+          const data = await res.json()
+          setError(data.errors?.[0]?.message || 'Login failed')
+        }
+      } catch {
+        setError('Network error')
       }
-    } catch {
-      setError('Network error')
-    }
+    })()
   }
 
   return (
@@ -70,9 +62,10 @@ function LoginView() {
       <h1>Payload Admin</h1>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '16px' }}>
-          <label htmlFor="email">Email</label>
+          <label htmlFor="payload-email">Email</label>
           <input
-            id="email"
+            aria-label="Email"
+            id="payload-email"
             name="email"
             onChange={(e) => setEmail(e.target.value)}
             style={{ display: 'block', padding: '8px', width: '100%' }}
@@ -81,9 +74,10 @@ function LoginView() {
           />
         </div>
         <div style={{ marginBottom: '16px' }}>
-          <label htmlFor="password">Password</label>
+          <label htmlFor="payload-password">Password</label>
           <input
-            id="password"
+            aria-label="Password"
+            id="payload-password"
             name="password"
             onChange={(e) => setPassword(e.target.value)}
             style={{ display: 'block', padding: '8px', width: '100%' }}
@@ -127,7 +121,7 @@ function DashboardView() {
  */
 export function AdminApp() {
   const [loading, setLoading] = useState(true)
-  const [clientConfig, setClientConfig] = useState<any>(null)
+  const [_clientConfig, setClientConfig] = useState<null | Record<string, unknown>>(null)
 
   useEffect(() => {
     fetchClientConfig()
@@ -142,7 +136,9 @@ export function AdminApp() {
 
   if (loading) {
     return (
-      <div style={{ alignItems: 'center', display: 'flex', height: '100vh', justifyContent: 'center' }}>
+      <div
+        style={{ alignItems: 'center', display: 'flex', height: '100vh', justifyContent: 'center' }}
+      >
         <p>Loading...</p>
       </div>
     )

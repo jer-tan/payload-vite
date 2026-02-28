@@ -1,4 +1,11 @@
-import type { SanitizedConfig } from 'payload'
+import type {
+  APIError,
+  GraphQLError,
+  GraphQLFormattedError,
+  Payload,
+  PayloadRequest,
+  SanitizedConfig,
+} from 'payload'
 
 import { configToSchema } from '@payloadcms/graphql'
 import { createHandler } from 'graphql-http/lib/use/fetch'
@@ -11,8 +18,6 @@ import {
   logError,
   mergeHeaders,
 } from 'payload'
-
-import type { APIError, GraphQLError, GraphQLFormattedError, Payload, PayloadRequest } from 'payload'
 
 const handleError = async ({
   err,
@@ -59,7 +64,10 @@ const handleError = async ({
   return response
 }
 
-let cached: { graphql: any; promise: Promise<any> | null } = { graphql: null, promise: null }
+let cached: {
+  graphql: { schema: unknown; validationRules: unknown } | null
+  promise: null | Promise<unknown>
+} = { graphql: null, promise: null }
 
 const getGraphql = async (config: Promise<SanitizedConfig> | SanitizedConfig) => {
   if (process.env.NODE_ENV === 'development') {

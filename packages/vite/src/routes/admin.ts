@@ -44,10 +44,7 @@ export async function adminHtmlHandler(options: AdminHtmlOptions): Promise<strin
   if (dev && vite) {
     // Development mode: inject Vite HMR client and entry module
     html = await vite.transformIndexHtml('/', html)
-    html = html.replace(
-      '<!--payload-head-->',
-      clientConfigScript,
-    )
+    html = html.replace('<!--payload-head-->', clientConfigScript)
     html = html.replace(
       '<!--payload-scripts-->',
       `<script type="module" src="${adminEntryPath}"></script>`,
@@ -57,20 +54,18 @@ export async function adminHtmlHandler(options: AdminHtmlOptions): Promise<strin
     try {
       const manifestPath = resolve(process.cwd(), 'dist/admin/.vite/manifest.json')
       const manifestContent = await readFile(manifestPath, 'utf-8')
-      const manifest = JSON.parse(manifestContent)
+      const manifest = JSON.parse(manifestContent) as Record<
+        string,
+        { css?: string[]; file?: string; isEntry?: boolean }
+      >
 
-      const entryChunk = Object.values(manifest).find(
-        (chunk: any) => chunk.isEntry,
-      ) as any
+      const entryChunk = Object.values(manifest).find((chunk) => chunk.isEntry)
 
       const cssLinks = (entryChunk?.css || [])
         .map((css: string) => `<link rel="stylesheet" href="${adminRoute}/${css}" />`)
         .join('\n    ')
 
-      html = html.replace(
-        '<!--payload-head-->',
-        `${clientConfigScript}\n    ${cssLinks}`,
-      )
+      html = html.replace('<!--payload-head-->', `${clientConfigScript}\n    ${cssLinks}`)
       html = html.replace(
         '<!--payload-scripts-->',
         `<script type="module" src="${adminRoute}/${entryChunk?.file || 'entry.js'}"></script>`,
@@ -86,12 +81,4 @@ export async function adminHtmlHandler(options: AdminHtmlOptions): Promise<strin
   }
 
   return html
-}
-
-/**
- * Express handler for serving admin panel files.
- */
-export function adminHandler() {
-  // This is a placeholder - the actual admin handler is created in server.ts
-  // using the adminHtmlHandler function with proper config
 }

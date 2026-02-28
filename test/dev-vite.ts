@@ -73,8 +73,7 @@ const findOpenPort = (startPort: number): Promise<number> => {
 const port = process.env.PORT ? Number(process.env.PORT) : 3000
 const availablePort = await findOpenPort(port)
 
-// @ts-expect-error - PORT is a string from somewhere
-process.env.PORT = availablePort
+process.env.PORT = String(availablePort)
 
 // Dynamic import of the Express + Vite server
 const { createPayloadViteServer } = await import('@payloadcms/vite')
