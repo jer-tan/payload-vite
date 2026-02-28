@@ -89,11 +89,16 @@
     },
     {
       "path": "./packages/sdk"
+    },
+    {
+      "path": "./packages/vite"
     }
   ],
   "include": [
     "${configDir}/src",
     ".next/types/**/*.ts",
-    "./scripts/**/*.ts"
+    "./scripts/**/*.ts",
+    "./server.ts",
+    "./vite.admin.config.ts"
   ]
 }
